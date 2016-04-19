@@ -1,0 +1,41 @@
+{% extends "layout_client.html" %}
+{% block title %}Create task{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block ext_js %}
+    <script type="text/javascript" src="{{ url_for('static', filename='js/task_table.js') }}"></script>
+{% endblock ext_js %}
+{% block content %}
+    <div class="container-fluid">
+        <h3 class="title">Tasks</h3>
+    </div>
+    <form id="task_table">
+        <ul class="nav nav-tabs">
+            <li role="presentation" class="active"><a href="#">All</a></li>
+            <li role="presentation" class="disabled"><a href="#">Success</a></li>
+            <li role="presentation" class="disabled"><a href="#">In progress</a></li>
+            <li role="presentation" class="disabled"><a href="#">Saved</a></li>
+        </ul>
+        <table id="allTasksTable" class="table table-striped">
+            <tr>
+                <th>ID</th>
+                <th>Task name</th>
+                <th>Code file</th>
+                <th>Data file</th>
+                <th>Created date</th>
+                <th>Start date</th>
+                <th>End date</th>
+                <th>Task version</th>
+                <th>Delete</th>
+            </tr>
+        </table>
+    </form>
+
+    <div hidden>
+        <tr>
+
+        </tr>
+    </div>
+
+{% endblock %}

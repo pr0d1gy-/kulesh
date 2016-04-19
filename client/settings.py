@@ -1,0 +1,7 @@
+CLIENT_ID = 'fw6rnYUAZlhRkU0sLzcy7e1uC8lHV6ImgJGls2Xv'
+CLIENT_SECRET = 'iI3AHX99pxGM13FrMt07I9MpdiftHGneri5mEd1ymwsIczvlrY'
+
+BASE_SERVER_URL = 'http://127.0.0.1:5000'
+ACCESS_TOKEN_URL = BASE_SERVER_URL + '/oauth/token'
+AUTHORIZE_URL = BASE_SERVER_URL + '/oauth/authorize'
+BASE_API_URL = BASE_SERVER_URL + '/api/'

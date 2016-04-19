@@ -1,0 +1,88 @@
+{% extends "layout_client.html" %}
+{% block title %}Create task{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+    <div class="container-fluid">
+        <h3 class="title">Create task</h3>
+    </div>
+    <form class="form-horizontal" id="create_task_form">
+        <div class="form-group">
+            <label type="text" class="col-xs-3 col-sm-3 col-md-3 control-label">Function name</label>
+            <div class="col-xs-8 col-sm-6 col-md-6">
+                <input type="text" class="form-control" placeholder="Enter name" name="name">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label type="text" class="col-xs-3 col-sm-3 col-md-3 control-label">Code</label>
+            <div class="col-xs-8 col-sm-6 col-md-6">
+                <textarea class="form-control" placeholder="Enter code" rows="6" name="code"></textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label type="text" class="col-xs-3 col-sm-3 col-md-3 control-label">Data</label>
+            <div class="col-xs-8 col-sm-6 col-md-6">
+                <textarea class="form-control" placeholder="Enter code" rows="6" name="data"></textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label type="text" class="col-xs-3 col-sm-3 col-md-3 control-label">Data file</label>
+            <div class="col-xs-8 col-sm-6 col-md-6">
+                <input type="file" name="data_file">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label type="text" class="col-xs-3 col-sm-3 col-md-3 control-label">Code file</label>
+            <div class="col-xs-8 col-sm-6 col-md-6">
+                <input type="file" name="code_file">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label type="text" class="col-xs-3 col-sm-3 col-md-3 control-label">Code from repo</label>
+            <div class="col-xs-8 col-sm-6 col-md-6">
+                <input type="url" class="form-control" placeholder="Enter repository URL" name="repository_url">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label type="text" class="col-xs-3 col-sm-3 col-md-3 control-label">Result file name</label>
+            <div class="col-xs-8 col-sm-6 col-md-6">
+                <input type="text" class="form-control" placeholder="Enter result file name" name="result_file_name">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label type="text" class="col-xs-3 col-sm-3 col-md-3 control-label">Server type</label>
+            <div class="col-xs-8 col-sm-6 col-md-6">
+                <select class="form-control" name="server_type">
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
+                    <option>6</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label type="text" class="col-xs-3 col-sm-3 col-md-3 control-label">Version</label>
+            <div class="col-xs-8 col-sm-6 col-md-6">
+                <input type="text" class="form-control" placeholder="Enter result file name" name="version">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-2 pull-right">
+              <button type="submit" class="btn btn-primary">Create task</button>
+            </div>
+        </div>
+
+    </form>
+{% endblock %}
