@@ -8,7 +8,7 @@ COPY . /home/user/server
 WORKDIR /home/user/server
 
 RUN pip install -r requirements.txt
-# RUN python -m flake8 .
+RUN python -m flake8 .
 
 USER user
 
