@@ -5,6 +5,9 @@ RUN apt-get install build-essential libpq-dev python-dev gcc -y
 
 RUN groupadd user && useradd --create-home --home-dir /home/user -g user user
 COPY . /home/user/server
+
+RUN chown user:user /home/user -R
+
 WORKDIR /home/user/server
 
 RUN pip install -r requirements.txt

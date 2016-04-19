@@ -1,29 +1,44 @@
 # coding: utf-8
-
+import os
 import json
+
 from datetime import datetime, timedelta
 
+from werkzeug.security import gen_salt
+
+from flask_oauthlib.provider import OAuth2Provider
+from flask.ext.cors import CORS
 from flask import Flask
 from flask import session, request, url_for, flash, \
     render_template, redirect, jsonify
-from werkzeug.security import gen_salt
-from flask_oauthlib.provider import OAuth2Provider
-from flask.ext.cors import CORS
 
 from models import db
-from models import User, Client, Grant, Token, Function, Task, Result, Data
+from models import User, Client, Grant, Token, Function, \
+    Task, Result, Data
 
 from jinja_filters import message_alert_glyph, messages_alert_tags
 
 
+DB_NAME = os.environ.get('DB_NAME', 'cr')
+DB_USER = os.environ.get('DB_USER', 'cr_user')
+DB_PASSWD = os.environ.get('DB_PASSWD', 'crpswrd')
+DB_HOST = os.environ.get('DB_HOST', 'postgres')
+
+
 app = Flask(__name__, template_folder='templates')
+
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+
 app.debug = True
 app.secret_key = 'c0derunner'
 
 app.config.update({
-    'SQLALCHEMY_DATABASE_URI': '/postgresql:/web-server/postgres',
-    # 'SQLALCHEMY_DATABASE_URI': 'sqlite:///db.cr',
+    'SQLALCHEMY_DATABASE_URI': 'postgresql://%s:%s@%s/%s' % (
+        DB_USER,
+        DB_PASSWD,
+        DB_HOST,
+        DB_NAME
+    ),
     'SQLALCHEMY_TRACK_MODIFICATIONS': True,
 })
 

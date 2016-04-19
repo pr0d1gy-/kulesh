@@ -10,10 +10,7 @@ sudo true
 # ----------------------------------------------------------------------------
 
 
-REDIS_CONTAINER_NAME="redis-brocker"
-POSTGRES_CONTAINER_NAME="postgresql"
-CELERY_WORKER_CONTAINER_NAME="celery-worker"
-SERVER_CONTAINER_NAME="web-server"
+source variables.sh
 
 
 # ----------------------------------------------------------------------------
@@ -38,11 +35,15 @@ else
 fi
 
 
+# Reset postgres
+echo -n "Reset postgre N/y? "
+read IS_RESET_POSTGRES
+
 # ----------------------------------------------------------------------------
 
 
 # Redis start
-if [[ $(sudo docker ps | grep "$REDIS_CONTAINER_NAME") == "" ]];
+if [[ $($SUDO docker ps | grep "$REDIS_CONTAINER_NAME") == "" ]];
 then
     echo 'Redis starting...'
     $SUDO docker run -d \
@@ -54,12 +55,18 @@ fi
 
 
 # Postgres start
-if [[ $(sudo docker ps | grep "$POSTGRES_CONTAINER_NAME") == "" ]];
+if [[ $($SUDO docker ps | grep "$POSTGRES_CONTAINER_NAME") == "" ]];
 then
     echo 'Postgres starting...'
     $SUDO docker run -d \
       --name "$POSTGRES_CONTAINER_NAME" -P postgres
     echo 'Postgres started.'
+
+    if [[ $IS_RESET_POSTGRES == "y" || $IS_RESET_POSTGRES == "Y" ]];
+    then
+        $SUDO chmod +x reset_postgres.sh
+        $SUDO reset_postgres.sh
+    fi
 else
     echo 'Postgres is already started.'
 fi
@@ -68,7 +75,7 @@ fi
 # Celery workers start
 for WORKER_NUM in $(seq 1 $WORKER_COUNT);
 do
-    if [[ $(sudo docker ps | grep "$CELERY_WORKER_CONTAINER_NAME-$WORKER_NUM") == "" ]];
+    if [[ $($SUDO docker ps | grep "$CELERY_WORKER_CONTAINER_NAME-$WORKER_NUM") == "" ]];
     then
         echo "Celery $WORKER_NUM worker starting..."
         $SUDO docker run -d \
@@ -86,12 +93,16 @@ done;
 
 
 # Server start
-if [[ $(sudo docker ps | grep "$SERVER_CONTAINER_NAME") == "" ]];
+if [[ $($SUDO docker ps | grep "$SERVER_CONTAINER_NAME") == "" ]];
 then
     echo 'Server starting...'
     $SUDO docker run -d \
       -p 5555:5555 \
-      --link postgresql:postgres \
+      --link $POSTGRES_CONTAINER_NAME:postgres \
+      -e DB_NAME=$SERVER_DB_NAME \
+      -e DB_USER=$SERVER_DB_USER \
+      -e DB_PASSWD=$SERVER_DB_PASSWD \
+      -e DB_HOST="postgres" \
       --name $SERVER_CONTAINER_NAME server
     echo 'Server started.'
 else
