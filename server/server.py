@@ -13,6 +13,8 @@ from flask.ext.cors import CORS
 from models import db
 from models import User, Client, Grant, Token, Function, Task, Result, Data
 
+from jinja_filters import message_alert_glyph, messages_alert_tags
+
 
 app = Flask(__name__, template_folder='templates')
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
@@ -24,6 +26,7 @@ app.config.update({
     # 'SQLALCHEMY_DATABASE_URI': 'sqlite:///db.cr',
     'SQLALCHEMY_TRACK_MODIFICATIONS': True,
 })
+
 db.init_app(app)
 oauth = OAuth2Provider(app)
 
@@ -57,7 +60,7 @@ def run_task(task_id):
 
 @app.route('/task/run/<task_id>')
 def task(task_id):
-   return run_task(task_id)
+    return run_task(task_id)
 
 
 def current_user():
@@ -223,7 +226,7 @@ def get_all_results():
 
 
 def add_result(request):
-    date_start = None # Task was started at
+    date_start = None  # Task was started at
     date_end = datetime.utcnow()
     task_id = request.values.get('task_id', None)
     status_id = request.values.get('status_id', None)
@@ -325,7 +328,7 @@ def save_token(token, request, *args, **kwargs):
 def client():
     user = current_user()
     if not user:
-        session['id'] = 1 # temporary decision
+        session['id'] = 1  # temporary decision
         # return redirect('/register')
     item = Client(
         client_id=gen_salt(40),
@@ -423,11 +426,11 @@ def results(pk=None):
         return remove_result(pk)
 
 
-"""
-Server authorization page
-"""
 @app.route('/login', methods=('GET', 'POST'))
 def login():
+    """
+    Server authorization page
+    """
     if 'id' in session:
         return redirect('http://127.0.0.1:8000/')
 
@@ -446,20 +449,13 @@ def login():
     return render_template('login.html')
 
 
-"""
-Server registration page
-"""
 @app.route('/register')
 def register():
+    """
+    Server registration page
+    """
     return render_template('register.html')
 
 
-from jinja_filters import message_alert_glyph, messages_alert_tags
 app.jinja_env.filters['glyph_class'] = message_alert_glyph
 app.jinja_env.filters['tag_class'] = messages_alert_tags
-
-
-# if __name__ == '__main__':
-#     with app.app_context():
-#         db.create_all()
-#         app.run()
