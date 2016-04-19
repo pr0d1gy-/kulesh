@@ -1,3 +1,4 @@
+flake8==2.5.4
 uWSGI==2.0.12
 Flask==0.10.1
 Flask-Celery-Helper==1.1.0
