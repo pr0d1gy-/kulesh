@@ -9,6 +9,8 @@ from werkzeug.security import gen_salt
 from flask_oauthlib.provider import OAuth2Provider
 from flask.ext.cors import CORS
 from flask import Flask
+from flask_script import Manager
+from flask_migrate import Migrate, MigrateCommand
 from flask import session, request, url_for, flash, \
     render_template, redirect, jsonify
 
@@ -44,6 +46,12 @@ app.config.update({
 
 db.init_app(app)
 oauth = OAuth2Provider(app)
+
+
+migrate = Migrate(app, db)
+
+manager = Manager(app)
+manager.add_command('db', MigrateCommand)
 
 
 def run_task(task_id):
@@ -474,3 +482,7 @@ def register():
 
 app.jinja_env.filters['glyph_class'] = message_alert_glyph
 app.jinja_env.filters['tag_class'] = messages_alert_tags
+
+
+if __name__ == '__main__':
+    manager.run()
