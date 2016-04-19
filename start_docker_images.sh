@@ -10,6 +10,7 @@ sudo true
 # ----------------------------------------------------------------------------
 
 
+PWD=$(pwd)
 source variables.sh
 
 
@@ -61,14 +62,15 @@ then
     $SUDO docker run -d \
       --name "$POSTGRES_CONTAINER_NAME" -P postgres
     echo 'Postgres started.'
-
-    if [[ $IS_RESET_POSTGRES == "y" || $IS_RESET_POSTGRES == "Y" ]];
-    then
-        $SUDO chmod +x reset_postgres.sh
-        $SUDO reset_postgres.sh
-    fi
 else
     echo 'Postgres is already started.'
+fi
+
+# Postgre reset?
+if [[ $IS_RESET_POSTGRES == "y" || $IS_RESET_POSTGRES == "Y" ]];
+then
+    $SUDO chmod "+x" "$PWD/reset_postgres.sh"
+    $SUDO "$PWD/reset_postgres.sh"
 fi
 
 
