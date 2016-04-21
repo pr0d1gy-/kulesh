@@ -36,9 +36,17 @@ else
 fi
 
 
-# Reset postgres
+# Reset postgres?
 echo -n "Reset postgre N/y? "
 read IS_RESET_POSTGRES
+
+# Apply migrations?
+echo -n "Apply server migrations N/y? "
+read IS_APPLY_MIGRATIONS
+
+# Is insert test user?
+echo -n "Is insert test user N/y? "
+read IS_INSERT_TEST_USER
 
 # ----------------------------------------------------------------------------
 
@@ -88,6 +96,7 @@ do
           -e DB_NAME=$SERVER_DB_NAME \
           -e DB_USER=$SERVER_DB_USER \
           -e DB_PASSWD=$SERVER_DB_PASSWD \
+          -e BASE_URL=$BASE_URL \
           -e DB_HOST="postgres" \
           --name "$CELERY_WORKER_CONTAINER_NAME-$WORKER_NUM" $CELERY_WORKER_CONTAINER_NAME
         echo "Celery $WORKER_NUM worker started."
@@ -113,8 +122,24 @@ then
       -e DB_HOST="postgres" \
       -e CELERY_BROKER_URL="redis://redis/1" \
       -e CELERY_RESULT_BACKEND="redis://redis/2" \
+      -e BASE_URL=$BASE_URL \
       --name $SERVER_CONTAINER_NAME server
     echo 'Server started.'
+    if [[ $IS_APPLY_MIGRATIONS == "y" || IS_APPLY_MIGRATIONS == "Y" ]];
+    then
+        echo "Appling migrations..."
+        $SUDO docker exec -it $SERVER_CONTAINER_NAME python /home/user/server/server.py db init
+        $SUDO docker exec -it $SERVER_CONTAINER_NAME python /home/user/server/server.py db migrate
+        $SUDO docker exec -it $SERVER_CONTAINER_NAME python /home/user/server/server.py db upgrade
+        echo "Aplied migrations."
+        if [[ '' ]];
+        then
+            SQL_INSERT_USER="insert into public.user(name, email, pwdhash) values ('test_user', 'test@mail.ru', 'pbkdf2:sha1:1000$3NOVQPrz$0c1b3a5d6c4a53078d2248ea5c4e19d40953d09f');"
+            echo "Inserting test user..."
+            $SUDO docker exec -it $POSTGRES_CONTAINER_NAME psql -U postgres -c "$SQL_INSERT_USER"
+            echo "Insered test user."
+        fi
+    fi
 else
     echo 'Server is already started.'
 fi
@@ -127,6 +152,7 @@ then
     $SUDO docker run -d \
       -p 8000:8000 \
       --link $SERVER_CONTAINER_NAME:server \
+      -e BASE_URL=$BASE_URL \
       --name $CLIENT_CONTAINER_NAME client
     echo 'Client started.'
 else

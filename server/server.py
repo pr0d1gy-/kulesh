@@ -1,7 +1,6 @@
 # coding: utf-8
 
 import os
-import json
 from datetime import datetime, timedelta
 
 from flask import Flask
@@ -10,19 +9,21 @@ from flask import session, request, url_for, flash, \
 from werkzeug.security import gen_salt
 from flask_oauthlib.provider import OAuth2Provider
 from flask.ext.cors import CORS
+from flask_script import Manager
+from flask_migrate import Migrate, MigrateCommand
 
 from models import db
 from models import User, Client, Grant, Token, Function, Task, Result, Data
 
 from jinja_filters import message_alert_glyph, messages_alert_tags
 
-from settings import BASE_CLIENT_URL
-
 
 DB_NAME = os.environ.get('DB_NAME', 'cr')
 DB_USER = os.environ.get('DB_USER', 'cr_user')
 DB_PASSWD = os.environ.get('DB_PASSWD', 'crpswrd')
 DB_HOST = os.environ.get('DB_HOST', 'postgres')
+
+BASE_URL = os.environ.get('BASE_URL', 'http://127.0.0.1:8000')
 
 
 app = Flask(__name__, template_folder='templates')
@@ -49,31 +50,9 @@ db.init_app(app)
 oauth = OAuth2Provider(app)
 
 
-def run_task(task_id):
-    task = Task.query.get(task_id)
-    if task:
-        code = task.code.strip()
-        data_obj = Data.query.get(task.data_id)
-        if data_obj:
-            data = json.loads(data_obj.data.strip())
-        else:
-            return jsonify(status='Error', msg='No data available')
-
-        local_vars = {}
-
-        code = compile(code % data, "<string>", "exec")
-        exec(code, globals(), local_vars)
-
-        try:
-            res = Result(result=local_vars['result'], task_id=task_id)
-            db.session.add(res)
-            db.session.commit()
-            return jsonify(status='Success', msg='Result row added')
-        except:
-            db.session.rollback()
-            return jsonify(status='Error', msg='Result not added')
-    else:
-        return jsonify(status='Error', msg='Task is not available')
+migrate = Migrate(app, db)
+manager = Manager(app)
+manager.add_command('db', MigrateCommand)
 
 
 @app.route('/api/task/run/<task_id>/', methods=['GET'])
@@ -379,11 +358,12 @@ def client():
     if not user:
         session['id'] = 1  # temporary decision
         # return redirect('/register')
+
     item = Client(
         client_id=gen_salt(40),
         client_secret=gen_salt(50),
         _redirect_uris=' '.join([
-            '%s/%s' % (BASE_CLIENT_URL, '/authorized'),
+            '%s/%s' % (BASE_URL, 'authorized'),
             'http://localhost:8000/authorized',
             'http://127.0.0.1:8000/authorized',
             'http://127.0.1:8000/authorized',
@@ -392,8 +372,10 @@ def client():
         _default_scopes='email',
         user_id=session['id'],
     )
+
     db.session.add(item)
     db.session.commit()
+
     return jsonify(
         client_id=item.client_id,
         client_secret=item.client_secret,
@@ -402,12 +384,7 @@ def client():
 
 @app.route('/')
 def main_rounte():
-    user = current_user()
-
-    if not user:
-        return redirect(url_for('login'))
-
-    return redirect('/client')
+    return redirect(url_for('login'))
 
 
 @app.route('/oauth/token', methods=['GET', 'POST'])
@@ -500,7 +477,7 @@ def login():
     Server authorization page
     """
     if 'id' in session:
-        return redirect(BASE_CLIENT_URL)
+        return redirect('/')
 
     if request.method == 'POST':
         email = request.form.get('email', '')
@@ -530,8 +507,4 @@ app.jinja_env.filters['tag_class'] = messages_alert_tags
 
 
 if __name__ == '__main__':
-    import os
-    os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = 'true'
-    with app.app_context():
-        db.create_all()
-        app.run(debug=True, host='0.0.0.0')
+    manager.run()

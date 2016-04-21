@@ -3,7 +3,7 @@ from flask import Flask, render_template, url_for, redirect, \
 from flask_oauthlib.client import OAuth
 
 from settings import CLIENT_ID, CLIENT_SECRET, ACCESS_TOKEN_URL, \
-    AUTHORIZE_URL, BASE_API_URL
+    AUTHORIZE_URL, BASE_URL
 
 
 app = Flask(__name__)
@@ -17,7 +17,7 @@ remote = oauth.remote_app(
     consumer_key=CLIENT_ID,
     consumer_secret=CLIENT_SECRET,
     request_token_params={'scope': 'email'},
-    base_url=BASE_API_URL,
+    base_url=BASE_URL,
     request_token_url=None,
     access_token_url=ACCESS_TOKEN_URL,
     authorize_url=AUTHORIZE_URL,
@@ -139,9 +139,3 @@ def quit():
     return remote.authorize(
         callback=url_for('authorized', next=next_url, _external=True)
     )
-
-if __name__ == '__main__':
-    import os
-    os.environ['DEBUG'] = 'true'
-    os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = 'true'
-    app.run(host='0.0.0.0', port=8000)

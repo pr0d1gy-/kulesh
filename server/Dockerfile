@@ -15,6 +15,8 @@ RUN python -m flake8 .
 
 USER user
 
+ENV OAUTHLIB_INSECURE_TRANSPORT=true
+
 CMD ["uwsgi", \
  "--chdir=/home/user/server", \
  "--http-socket=0.0.0.0:5000", \
@@ -24,4 +26,4 @@ CMD ["uwsgi", \
  "--pidfile=/tmp/uwsgi.pid", \
  "--processes=2", \
  "--threads=2", \
- "--logger file:/var/log/uwsgi.log"]
+ "--logger=file:/home/user/server/uwsgi.log"]

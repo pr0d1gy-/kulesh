@@ -26,4 +26,4 @@ CMD ["uwsgi", \
  "--pidfile=/tmp/uwsgi.pid", \
  "--processes=2", \
  "--threads=2", \
- "--logger file:/var/log/uwsgi.log"]
+ "--logger=file:/home/user/client/uwsgi.log"]

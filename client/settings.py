@@ -1,10 +1,14 @@
-CLIENT_ID = 'kcYv4SzSIiUrwJwRdt71yeH3yeRAw8csbF8jBCED'
-CLIENT_SECRET = 'gsiXGkfY5bYGHQwiekba5P6qNbL04duIXr5zk2QLIyDA0dM62I'
+import os
 
 
-BASE_CLIENT_URL = 'http://127.0.0.1:8000'
-BASE_SERVER_URL = 'http://127.0.0.1:5000'
+CLIENT_ID = 'EiP1YEdKoBnhOV5LrmXGPLbfp8OSqxkuQnqlu9M0'
+CLIENT_SECRET = 'EXksbecWsatbcO5LDEtUDeFwp5gJduQXuQXHlDViFUlq257MLR'
 
-ACCESS_TOKEN_URL = 'http://api:5000/oauth/token'
+
+BASE_URL = os.environ.get('BASE_URL', 'http://127.0.0.1:8000')
+
+BASE_SERVER_URL = 'http://server:5000'
+
+ACCESS_TOKEN_URL = BASE_SERVER_URL + '/oauth/token'
 AUTHORIZE_URL = BASE_SERVER_URL + '/oauth/authorize'
 BASE_API_URL = BASE_SERVER_URL + '/api/'

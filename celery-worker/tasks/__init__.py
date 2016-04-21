@@ -27,29 +27,33 @@ POSTGRES_CONNECTION_STRING = \
     )
 
 
+SQL_SELECT_TASK_BY_ID = 'SELECT * from task where id=%s;'
+SQL_SELECT_TASK_DATA_BY_ID = 'SELECT * from data where id=%s;'
+SQL_INSERT_TASK_RESULT = \
+    'INSERT INTO result (date_end, task_id, status_id, result) ' \
+    'VALUES (%s, %s, %s, %s);'
+
+
 @app.task
 def execute_code(task_id):
-    SQL_SELECT_TASK_BY_ID = 'SELECT * from task where id=%s;'
-    SQL_INSERT_TASK_RESULT = \
-        'INSERT INTO result (date_end, task_id, status_id, result) ' \
-        'VALUES (%s, %s, %s, %s);'
-
     try:
         print(task_id)
 
         conn = psycopg2.connect(POSTGRES_CONNECTION_STRING)
 
         cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        cur.execute("""%s""" % str(task_id))
+        cur.execute(SQL_SELECT_TASK_BY_ID % str(task_id))
 
         task = cur.fetchall()
 
         if task:
             task = task[0]
+
             print(task)
+
             code = task['code'].strip()
 
-            cur.execute(SQL_SELECT_TASK_BY_ID % task['data_id'])
+            cur.execute(SQL_SELECT_TASK_DATA_BY_ID % task['data_id'])
             data_obj = cur.fetchall()
 
             if data_obj:
@@ -58,7 +62,9 @@ def execute_code(task_id):
 
                 local_vars = {}
                 code_obj = compile(code, '<string>', 'exec')
+
                 exec(code_obj, globals(), local_vars)
+
                 f = local_vars['f']
 
                 result = f(data)
@@ -69,6 +75,7 @@ def execute_code(task_id):
                     1,
                     json.dumps(result)
                 ))
+
                 conn.commit()
 
     except Exception as e:

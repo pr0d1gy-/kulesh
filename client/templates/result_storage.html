@@ -1,0 +1,31 @@
+{% extends "layout_client.html" %}
+{% block title %}Create task{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block ext_js %}
+    <script type="text/javascript" src="{{ url_for('static', filename='js/result_storage.js') }}"></script>
+{% endblock ext_js %}
+{% block content %}
+    <div class="container-fluid">
+        <h3 class="title">Results storage</h3>
+    </div>
+    <form>
+        <table id="resultsTable" class="table table-striped">
+            <tr>
+                <th>ID</th>
+                <th>File name</th>
+                <th>Task</th>
+                <th>Size</th>
+                <th>Add date</th>
+                <th>Result</th>
+                <th>Delete</th>
+            </tr>
+        </table>
+    </form>
+    <div hidden>
+        <tr>
+
+        </tr>
+    </div>
+{% endblock %}
