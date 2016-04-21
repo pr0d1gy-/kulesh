@@ -10,5 +10,5 @@ BASE_URL = os.environ.get('BASE_URL', 'http://127.0.0.1:8000')
 BASE_SERVER_URL = 'http://server:5000'
 
 ACCESS_TOKEN_URL = BASE_SERVER_URL + '/oauth/token'
-AUTHORIZE_URL = BASE_SERVER_URL + '/oauth/authorize'
-BASE_API_URL = BASE_SERVER_URL + '/api/'
+AUTHORIZE_URL = '/oauth/authorize'
+BASE_API_URL = '/api/'

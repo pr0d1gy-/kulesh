@@ -57,7 +57,7 @@ manager.add_command('db', MigrateCommand)
 
 @app.route('/api/task/run/<task_id>/', methods=['GET'])
 def task(task_id):
-    from celery import execute_code
+    from tasks import execute_code
 
     try:
         execute_code.delay(task_id)

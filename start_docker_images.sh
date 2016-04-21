@@ -96,8 +96,8 @@ do
           -e DB_NAME=$SERVER_DB_NAME \
           -e DB_USER=$SERVER_DB_USER \
           -e DB_PASSWD=$SERVER_DB_PASSWD \
-          -e BASE_URL=$BASE_URL \
           -e DB_HOST="postgres" \
+          -e BASE_URL=$BASE_URL \
           --name "$CELERY_WORKER_CONTAINER_NAME-$WORKER_NUM" $CELERY_WORKER_CONTAINER_NAME
         echo "Celery $WORKER_NUM worker started."
     else

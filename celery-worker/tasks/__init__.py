@@ -31,7 +31,7 @@ SQL_SELECT_TASK_BY_ID = 'SELECT * from task where id=%s;'
 SQL_SELECT_TASK_DATA_BY_ID = 'SELECT * from data where id=%s;'
 SQL_INSERT_TASK_RESULT = \
     'INSERT INTO result (date_end, task_id, status_id, result) ' \
-    'VALUES (%s, %s, %s, %s);'
+    'VALUES (\'%s\', %s, %s, %s);'
 
 
 @app.task
