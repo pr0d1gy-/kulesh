@@ -125,18 +125,22 @@ then
       -e BASE_URL=$BASE_URL \
       --name $SERVER_CONTAINER_NAME server
     echo 'Server started.'
-    if [[ $IS_APPLY_MIGRATIONS == "y" || IS_APPLY_MIGRATIONS == "Y" ]];
+
+    if [[ $IS_APPLY_MIGRATIONS == "y" || $IS_APPLY_MIGRATIONS == "Y" ]];
     then
         echo "Appling migrations..."
         $SUDO docker exec -it $SERVER_CONTAINER_NAME python /home/user/server/server.py db init
         $SUDO docker exec -it $SERVER_CONTAINER_NAME python /home/user/server/server.py db migrate
         $SUDO docker exec -it $SERVER_CONTAINER_NAME python /home/user/server/server.py db upgrade
         echo "Aplied migrations."
-        if [[ '' ]];
+
+        if [[ $IS_INSERT_TEST_USER == "y" || $IS_INSERT_TEST_USER == "Y" ]];
         then
             SQL_INSERT_USER="insert into public.user(name, email, pwdhash) values ('test_user', 'test@mail.ru', 'pbkdf2:sha1:1000$3NOVQPrz$0c1b3a5d6c4a53078d2248ea5c4e19d40953d09f');"
             echo "Inserting test user..."
             $SUDO docker exec -it $POSTGRES_CONTAINER_NAME psql -U postgres -c "$SQL_INSERT_USER"
+            $SUDO docker exec -it $POSTGRES_CONTAINER_NAME psql -U postgres -c "insert into status (id, title) VALUES (1, 'success');"
+            $SUDO docker exec -it $POSTGRES_CONTAINER_NAME psql -U postgres -c "insert into status (id, title) VALUES (2, 'error');"
             echo "Insered test user."
         fi
     fi

@@ -8,7 +8,7 @@ $(function () {
         row.append('<td>' + (task.updated || '') + '</td>');
         row.append('<td>' + (task.updated || '') + '</td>');
         row.append('<td>' + (task.updated || '') + '</td>');
-        row.append('<td>' + (task.version || '') + '</td>');
+        //row.append('<td>' + (task.version || '') + '</td>');
         row.append('<td class="run-task-btn"><span class="btn btn-success glyphicon">Run</span></td>');
         row.append('<td class="delete-task-btn"><span class="btn btn-danger glyphicon glyphicon-trash"></span></td>');
         $('#allTasksTable').append(row);

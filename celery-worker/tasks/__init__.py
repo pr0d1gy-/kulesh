@@ -3,6 +3,7 @@ import json
 import psycopg2
 import psycopg2.extras
 import celeryconfig
+import traceback
 
 from datetime import datetime
 from celery import Celery
@@ -31,7 +32,7 @@ SQL_SELECT_TASK_BY_ID = 'SELECT * from task where id=%s;'
 SQL_SELECT_TASK_DATA_BY_ID = 'SELECT * from data where id=%s;'
 SQL_INSERT_TASK_RESULT = \
     'INSERT INTO result (date_end, task_id, status_id, result) ' \
-    'VALUES (\'%s\', %s, %s, %s);'
+    'VALUES (\'%s\', %s, %s, \'%s\');'
 
 
 @app.task
@@ -53,35 +54,47 @@ def execute_code(task_id):
 
             code = task['code'].strip()
 
+            data = {}
+
             cur.execute(SQL_SELECT_TASK_DATA_BY_ID % task['data_id'])
             data_obj = cur.fetchall()
 
-            if data_obj:
+            try:
                 data_obj = data_obj[0]
-                data = json.loads(data_obj['data'].strip())
+                data_str = data_obj["data"]
+                data = json.loads(data_str.strip())
+            except (ValueError, KeyError) as e:
+                traceback.print_exc()
+                print(e)
 
-                local_vars = {}
-                code_obj = compile(code, '<string>', 'exec')
+            local_vars = {}
+            code_obj = compile(code, '<string>', 'exec')
 
-                exec(code_obj, globals(), local_vars)
+            exec(code_obj, globals(), local_vars)
 
-                f = local_vars['f']
+            f = local_vars['f']
 
-                result = f(data)
+            result = f(data)
 
-                cur.execute(SQL_INSERT_TASK_RESULT % (
-                    datetime.utcnow(),
-                    task_id,
-                    1,
-                    json.dumps(result)
-                ))
+            cur.execute(SQL_INSERT_TASK_RESULT % (
+                str(datetime.utcnow()),
+                task_id,
+                1,
+                json.dumps(result)
+            ))
 
-                conn.commit()
+            conn.commit()
+
+        return json.dumps({
+            'status': 'Success',
+            'msg': 'Task ended'
+        })
 
     except Exception as e:
+        traceback.print_exc()
         print(e)
 
-    return json.dumps({
-        'status': 'Success',
-        'msg': 'Task ended'
-    })
+        return json.dumps({
+            'status': 'ERROR',
+            'msg': str(e)
+        })

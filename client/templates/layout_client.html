@@ -15,9 +15,9 @@
   <nav class="navbar navbar-default">
   <div class="container-fluid">
     <div class="navbar-header">
-      <a class="navbar-brand" href="#">
+      <span class="navbar-brand">
           <span class="glyphicon glyphicon-tasks" aria-hidden="true"></span>
-      </a>
+      </span>
     </div>
   </div>
   </nav>
@@ -32,17 +32,17 @@
               <li id="task_table" role="presentation">
                   <a href={{ url_for('get_table_task') }}>Task table</a>
               </li>
-              <li id="data_storage" role="presentation">
-                  <a href={{ url_for('get_data_storage') }}>Data storage</a>
-              </li>
+{#              <li id="data_storage" role="presentation">#}
+{#                  <a href={{ url_for('get_data_storage') }}>Data storage</a>#}
+{#              </li>#}
               <li id="results_storage" role="presentation">
                   <a href={{ url_for('get_results_storage') }}>Results storage</a>
               </li>
-              <li id="profile_settings" role="presentation">
-                  <a href={{ url_for('get_profile_settings') }}>Profile settings</a>
-              </li>
+{#              <li id="profile_settings" role="presentation">#}
+{#                  <a href={{ url_for('get_profile_settings') }}>Profile settings</a>#}
+{#              </li>#}
               <li id="quit" role="presentation">
-                  <a href={{ url_for('quit') }}>Quit</a>
+                  <a href={{ url_for('quit') }}>Refresh token</a>
               </li>
           </ul>
       </div>
