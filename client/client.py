@@ -11,6 +11,7 @@ app.debug = True
 app.secret_key = 'c0derunner'
 oauth = OAuth(app)
 
+
 remote = oauth.remote_app(
     'remote',
     consumer_key=CLIENT_ID,
@@ -52,9 +53,8 @@ def authorized():
 def get_oauth_token():
     return session.get('remote_oauth')
 
-"""
-Flask application part
-"""
+
+# Flask application part
 
 
 @app.route('/')
@@ -75,7 +75,7 @@ def create_task():
         oauth_token = session['remote_oauth']
         return render_template('create_task.html', access_token=oauth_token)
 
-    next_url = None  # request.args.get('next') or request.referrer or None
+    next_url = None
     return remote.authorize(
         callback=url_for('authorized', next=next_url, _external=True)
     )
@@ -87,7 +87,7 @@ def get_table_task():
         oauth_token = session['remote_oauth']
         return render_template('task_table.html', access_token=oauth_token)
 
-    next_url = None  # request.args.get('next') or request.referrer or None
+    next_url = None
     return remote.authorize(
         callback=url_for('authorized', next=next_url, _external=True)
     )
@@ -99,7 +99,7 @@ def get_data_storage():
         oauth_token = session['remote_oauth']
         return render_template('data_storage.html', access_token=oauth_token)
 
-    next_url = None  # request.args.get('next') or request.referrer or None
+    next_url = None
     return remote.authorize(
         callback=url_for('authorized', next=next_url, _external=True)
     )
@@ -111,7 +111,7 @@ def get_results_storage():
         oauth_token = session['remote_oauth']
         return render_template('result_storage.html', access_token=oauth_token)
 
-    next_url = None  # request.args.get('next') or request.referrer or None
+    next_url = None
     return remote.authorize(
         callback=url_for('authorized', next=next_url, _external=True)
     )
@@ -121,9 +121,13 @@ def get_results_storage():
 def get_profile_settings():
     if 'remote_oauth' in session:
         oauth_token = session['remote_oauth']
-        return render_template('profile_settings.html', access_token=oauth_token)
 
-    next_url = None  # request.args.get('next') or request.referrer or None
+        return render_template(
+            'profile_settings.html',
+            access_token=oauth_token
+        )
+
+    next_url = None
     return remote.authorize(
         callback=url_for('authorized', next=next_url, _external=True)
     )
@@ -131,7 +135,7 @@ def get_profile_settings():
 
 @app.route('/quit')
 def quit():
-    next_url = None  # request.args.get('next') or request.referrer or None
+    next_url = None
     return remote.authorize(
         callback=url_for('authorized', next=next_url, _external=True)
     )
@@ -140,4 +144,4 @@ if __name__ == '__main__':
     import os
     os.environ['DEBUG'] = 'true'
     os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = 'true'
-    app.run(host='localhost', port=8000)
+    app.run(host='0.0.0.0', port=8000)

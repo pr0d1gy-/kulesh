@@ -82,8 +82,13 @@ do
         echo "Celery $WORKER_NUM worker starting..."
         $SUDO docker run -d \
           --link $REDIS_CONTAINER_NAME:redis \
+          --link $POSTGRES_CONTAINER_NAME:postgres \
           -e CELERY_BROKER_URL="redis://redis/1" \
           -e CELERY_RESULT_BACKEND="redis://redis/2" \
+          -e DB_NAME=$SERVER_DB_NAME \
+          -e DB_USER=$SERVER_DB_USER \
+          -e DB_PASSWD=$SERVER_DB_PASSWD \
+          -e DB_HOST="postgres" \
           --name "$CELERY_WORKER_CONTAINER_NAME-$WORKER_NUM" $CELERY_WORKER_CONTAINER_NAME
         echo "Celery $WORKER_NUM worker started."
     else
@@ -99,12 +104,15 @@ if [[ $($SUDO docker ps | grep "$SERVER_CONTAINER_NAME") == "" ]];
 then
     echo 'Server starting...'
     $SUDO docker run -d \
-      -p 5555:5555 \
+      -p 5000:5000 \
       --link $POSTGRES_CONTAINER_NAME:postgres \
+      --link $REDIS_CONTAINER_NAME:redis \
       -e DB_NAME=$SERVER_DB_NAME \
       -e DB_USER=$SERVER_DB_USER \
       -e DB_PASSWD=$SERVER_DB_PASSWD \
       -e DB_HOST="postgres" \
+      -e CELERY_BROKER_URL="redis://redis/1" \
+      -e CELERY_RESULT_BACKEND="redis://redis/2" \
       --name $SERVER_CONTAINER_NAME server
     echo 'Server started.'
 else
@@ -113,4 +121,14 @@ fi
 
 
 # Client start
-# $SUDO
+if [[ $($SUDO docker ps | grep "$CLIENT_CONTAINER_NAME") == "" ]];
+then
+    echo 'Client starting...'
+    $SUDO docker run -d \
+      -p 8000:8000 \
+      --link $SERVER_CONTAINER_NAME:server \
+      --name $CLIENT_CONTAINER_NAME client
+    echo 'Client started.'
+else
+    echo 'Client is already started.'
+fi

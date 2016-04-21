@@ -5,7 +5,8 @@ $(function () {
         row.append('<td>' + (result.file_name || '') + '</td>');
         row.append('<td>' + (result.task_name || '') + '</td>');
         row.append('<td>' + (result.size || '') + '</td>');
-        row.append('<td>' + (result.date_start || '') + '</td>');
+        row.append('<td>' + (result.date_end || '') + '</td>');
+        row.append('<td>' + (result.result || '') + '</td>');
         row.append('<td class="delete-result-btn"><span class="btn btn-danger glyphicon glyphicon-trash"></span></td>');
         $('#resultsTable').append(row);
     };

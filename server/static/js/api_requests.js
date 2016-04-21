@@ -6,6 +6,13 @@ TasksUrl = {
             url += '/' + id;
         }
         return url;
+    },
+    RunTasks: function(id){
+        var url = 'http://127.0.0.1:5000/api/task/run';
+        if (id){
+            url += '/' + id;
+        }
+        return url;
     }
 
 };
@@ -48,6 +55,17 @@ RequestsTasks = {
             },
             success: success
         })
+    },
+    runTask: function(id, success){
+        $.ajax({
+            url: TasksUrl.RunTasks(id),
+            method: 'GET',
+            dataType: 'JSON',
+            data: {
+                'access_token': RequestsTasks.getToken()
+            },
+            success: success
+        })
     }
 };
 
@@ -82,6 +100,17 @@ $(function() { // getting data for the table
         console.log($(this).parent().data('id'));
         RequestsTasks.deleteTask($(this).parent().data('id'), success)
     });
+
+    $('#allTasksTable').delegate('.run-task-btn', 'click', function () {
+        var row =  $(this).parent();
+        var success = function () {
+            alert("Task has been run");
+        };
+        console.log($(this).parent().data('id'));
+        RequestsTasks.runTask($(this).parent().data('id'), success)
+    });
+
+
 
     var initLeftMenu = function () {
         var currPage = document.location.pathname.replace('/', '');

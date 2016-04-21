@@ -1,24 +1,22 @@
 # coding: utf-8
+
 import os
 import json
-
 from datetime import datetime, timedelta
 
-from werkzeug.security import gen_salt
-
-from flask_oauthlib.provider import OAuth2Provider
-from flask.ext.cors import CORS
 from flask import Flask
-from flask_script import Manager
-from flask_migrate import Migrate, MigrateCommand
 from flask import session, request, url_for, flash, \
     render_template, redirect, jsonify
+from werkzeug.security import gen_salt
+from flask_oauthlib.provider import OAuth2Provider
+from flask.ext.cors import CORS
 
 from models import db
-from models import User, Client, Grant, Token, Function, \
-    Task, Result, Data
+from models import User, Client, Grant, Token, Function, Task, Result, Data
 
 from jinja_filters import message_alert_glyph, messages_alert_tags
+
+from settings import BASE_CLIENT_URL
 
 
 DB_NAME = os.environ.get('DB_NAME', 'cr')
@@ -44,14 +42,11 @@ app.config.update({
     'SQLALCHEMY_TRACK_MODIFICATIONS': True,
 })
 
+
 db.init_app(app)
+
+
 oauth = OAuth2Provider(app)
-
-
-migrate = Migrate(app, db)
-
-manager = Manager(app)
-manager.add_command('db', MigrateCommand)
 
 
 def run_task(task_id):
@@ -70,7 +65,7 @@ def run_task(task_id):
         exec(code, globals(), local_vars)
 
         try:
-            res = Result(result=local_vars['result'])
+            res = Result(result=local_vars['result'], task_id=task_id)
             db.session.add(res)
             db.session.commit()
             return jsonify(status='Success', msg='Result row added')
@@ -81,9 +76,17 @@ def run_task(task_id):
         return jsonify(status='Error', msg='Task is not available')
 
 
-@app.route('/task/run/<task_id>')
+@app.route('/api/task/run/<task_id>/', methods=['GET'])
 def task(task_id):
-    return run_task(task_id)
+    from celery import execute_code
+
+    try:
+        execute_code.delay(task_id)
+        resp = jsonify(status='Success', msg='Result row added')
+    except Exception as e:
+        resp = jsonify(status='Error', msg='Result not added. ' + str(e))
+
+    return resp
 
 
 def current_user():
@@ -101,7 +104,7 @@ def get_tasks():
             tlist.append({
                 'id': task.id,
                 'code': task.code,
-                'name': task.function.name,
+                'name': task.function.name if task.function else 'none',
                 'updated': task.updated,
                 'function_id': task.function_id,
                 'version': task.version
@@ -115,6 +118,7 @@ def add_task(request):
     name = request.values.get('name', None)
     code = request.values.get('code', None)
     version = request.values.get('version', None)
+    data = request.values.get('data', None)
 
     created = datetime.utcnow()
 
@@ -122,6 +126,7 @@ def add_task(request):
         return jsonify(status='Error', msg='Some required field is empty')
 
     try:
+
         function = Function(
             name=name,
             created=created,
@@ -130,12 +135,17 @@ def add_task(request):
         db.session.add(function)
         db.session.commit()
 
+        data = Data(data=data)
+        db.session.add(data)
+        db.session.commit()
+
         updated = created
         task = Task(
             function_id=function.id,
             updated=updated,
             code=code,
             version=version,
+            data_id=data.id
         )
         db.session.add(task)
         db.session.commit()
@@ -235,9 +245,14 @@ def get_all_results():
     if results:
         rlist = []
         for result in results:
+            task_name = '-'
+            if result.task and \
+                    result.task.function and \
+                    result.task.function.name:
+                task_name = result.task.function.name
             rlist.append({
                 'id': result.id,
-                'task_name': result.task.function.name,
+                'task_name': task_name,
                 'date_start': result.date_start,
                 'date_end': result.date_end,
                 'task_id': result.task_id,
@@ -261,14 +276,25 @@ def add_result(request):
             date_end=date_end,
             task_id=task_id,
             status_id=status_id,
-            result=result)
+            result=result
+        )
+
         db.session.add(result)
         db.session.commit()
-        return jsonify(status='Success',
-                       msg='Task result added', result_id=result.id)
+
+        return jsonify(
+            status='Success',
+            msg='Task result added',
+            result_id=result.id
+        )
+
     except:
         db.session.rollback()
-        return jsonify(status='Error', msg='Result not added')
+
+        return jsonify(
+            status='Error',
+            msg='Result not added'
+        )
 
 
 def remove_result(pk):
@@ -357,6 +383,7 @@ def client():
         client_id=gen_salt(40),
         client_secret=gen_salt(50),
         _redirect_uris=' '.join([
+            '%s/%s' % (BASE_CLIENT_URL, '/authorized'),
             'http://localhost:8000/authorized',
             'http://127.0.0.1:8000/authorized',
             'http://127.0.1:8000/authorized',
@@ -371,6 +398,16 @@ def client():
         client_id=item.client_id,
         client_secret=item.client_secret,
     )
+
+
+@app.route('/')
+def main_rounte():
+    user = current_user()
+
+    if not user:
+        return redirect(url_for('login'))
+
+    return redirect('/client')
 
 
 @app.route('/oauth/token', methods=['GET', 'POST'])
@@ -431,10 +468,14 @@ def users(pk=None):
 def data(pk=None):
     if request.method == 'GET':
         return get_all_data()
+
     elif request.method == 'POST':
         return add_data_row(request)
+
     elif request.method == 'DELETE':
         return remove_data_row(pk)
+
+    return None
 
 
 @app.route('/api/results', methods=['GET', 'POST'])
@@ -443,10 +484,14 @@ def data(pk=None):
 def results(pk=None):
     if request.method == 'GET':
         return get_all_results()
+
     elif request.method == 'POST':
         return add_result(request)
+
     elif request.method == 'DELETE':
         return remove_result(pk)
+
+    return None
 
 
 @app.route('/login', methods=('GET', 'POST'))
@@ -455,7 +500,7 @@ def login():
     Server authorization page
     """
     if 'id' in session:
-        return redirect('http://127.0.0.1:8000/')
+        return redirect(BASE_CLIENT_URL)
 
     if request.method == 'POST':
         email = request.form.get('email', '')
@@ -485,4 +530,8 @@ app.jinja_env.filters['tag_class'] = messages_alert_tags
 
 
 if __name__ == '__main__':
-    manager.run()
+    import os
+    os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = 'true'
+    with app.app_context():
+        db.create_all()
+        app.run(debug=True, host='0.0.0.0')

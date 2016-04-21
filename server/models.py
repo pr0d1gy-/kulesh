@@ -1,7 +1,6 @@
-from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
 
-from werkzeug.security import generate_password_hash, \
-     check_password_hash
+from flask_sqlalchemy import SQLAlchemy
 
 
 db = SQLAlchemy()
@@ -20,7 +19,8 @@ class User(db.Model):
     email = db.Column(db.String(40), unique=True)
     pwdhash = db.Column(db.String(80))
     user_groups = db.relationship(
-        'UserGroup', secondary=user_groups,
+        'UserGroup',
+        secondary=user_groups,
         backref=db.backref('users', lazy='dynamic'))
 
     def __init__(self, name, email, password):
