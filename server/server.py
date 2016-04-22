@@ -76,13 +76,14 @@ def current_user():
 
 
 def get_tasks():
-    tasks = Task.query.all()
+    tasks = Task.query.join('data').all()
     if tasks:
         tlist = []
         for task in tasks:
             tlist.append({
                 'id': task.id,
                 'code': task.code,
+                'data': task.data.data,
                 'name': task.function.name if task.function else 'none',
                 'updated': task.updated,
                 'function_id': task.function_id,

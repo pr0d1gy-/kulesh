@@ -46,7 +46,7 @@ read IS_APPLY_MIGRATIONS
 
 # Is insert test user?
 echo -n "Is insert test user N/y? "
-read IS_INSERT_TEST_USER
+read IS_INSERT_FIXTURES
 
 # ----------------------------------------------------------------------------
 
@@ -134,11 +134,10 @@ then
         $SUDO docker exec -it $SERVER_CONTAINER_NAME python /home/user/server/server.py db upgrade
         echo "Aplied migrations."
 
-        if [[ $IS_INSERT_TEST_USER == "y" || $IS_INSERT_TEST_USER == "Y" ]];
+        if [[ $IS_INSERT_FIXTURES == "y" || $IS_INSERT_FIXTURES == "Y" ]];
         then
-            SQL_INSERT_USER="insert into public.user(name, email, pwdhash) values ('test_user', 'test@mail.ru', 'pbkdf2:sha1:1000$3NOVQPrz$0c1b3a5d6c4a53078d2248ea5c4e19d40953d09f');"
             echo "Inserting test user..."
-            $SUDO docker exec -it $POSTGRES_CONTAINER_NAME psql -U postgres -c "$SQL_INSERT_USER"
+            $SUDO docker exec -it $POSTGRES_CONTAINER_NAME psql -U postgres -c "insert into public.user(name, email, pwdhash) values ('test_user', 'test@mail.ru', 'pbkdf2:sha1:1000$3NOVQPrz$0c1b3a5d6c4a53078d2248ea5c4e19d40953d09f');"
             $SUDO docker exec -it $POSTGRES_CONTAINER_NAME psql -U postgres -c "insert into status (id, title) VALUES (1, 'success');"
             $SUDO docker exec -it $POSTGRES_CONTAINER_NAME psql -U postgres -c "insert into status (id, title) VALUES (2, 'error');"
             echo "Insered test user."

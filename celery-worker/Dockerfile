@@ -1,7 +1,7 @@
 FROM python:3.4-slim
 
 RUN apt-get update
-RUN apt-get install build-essential libpq-dev python-dev gcc -y
+RUN apt-get install build-essential libpq-dev python-dev gcc mercurial -y
 
 RUN groupadd user && useradd --create-home --home-dir /home/user -g user user
 COPY . /home/user/worker

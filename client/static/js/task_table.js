@@ -3,8 +3,8 @@ $(function () {
         var row = $('<tr data-id="'+task.id +'"></tr>');
         row.append('<td>' + (task.id || '') + '</td>');
         row.append('<td>' + (task.name || '') + '</td>');
-        row.append('<td>' + (task.code_file || '') + '</td>');
-        row.append('<td>' + (task.data_file || '') + '</td>');
+        row.append('<td><pre>' + (task.code || '') + '</pre></td>');
+        row.append('<td><pre>' + (task.data || '') + '</pre></td>');
         row.append('<td>' + (task.updated || '') + '</td>');
         row.append('<td>' + (task.updated || '') + '</td>');
         row.append('<td>' + (task.updated || '') + '</td>');

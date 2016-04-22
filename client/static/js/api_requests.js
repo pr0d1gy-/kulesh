@@ -1,14 +1,14 @@
 // Tasks
 TasksUrl = {
     Tasks: function(id){
-        var url = 'http://127.0.0.1:5000/api/tasks';
+        var url = '/api/tasks';
         if (id){
             url += '/' + id;
         }
         return url;
     },
     RunTasks: function(id){
-        var url = 'http://127.0.0.1:5000/api/task/run';
+        var url = '/api/task/run';
         if (id){
             url += '/' + id;
         }
@@ -33,16 +33,14 @@ RequestsTasks = {
             error: error
         })
     },
-    createTask: function(data){
+    createTask: function(data, success){
         data = $.extend({'access_token': RequestsTasks.getToken()}, data );
         $.ajax({
             url: TasksUrl.Tasks(),
             method: 'POST',
             dataType: 'JSON',
             data: data,
-            success: function(data){
-                console.log(data);
-            }
+            success: success
         });
     },
     deleteTask: function(id, success){
@@ -86,8 +84,16 @@ $(function() { // getting data for the table
         event.preventDefault();
         var formData = getFormData($(this));
         console.log(formData);
-        RequestsTasks.createTask(formData);
-        $(this).trigger('reset');
+        RequestsTasks.createTask(formData, function(data){
+            if (data.status == 'Success'){
+                alert(data.msg);
+                $(this).trigger('reset');
+            } else if (data.status == 'Error'){
+                alert(data.msg);
+            } else {
+                alert('Something wrong!');
+            }
+        });
     });
 
 
@@ -95,6 +101,7 @@ $(function() { // getting data for the table
     $('#allTasksTable').delegate('.delete-task-btn', 'click', function () {
         var row =  $(this).parent();
         var success = function () {
+            alert("Task was removed.");
             row.remove();
         };
         console.log($(this).parent().data('id'));
@@ -104,7 +111,7 @@ $(function() { // getting data for the table
     $('#allTasksTable').delegate('.run-task-btn', 'click', function () {
         var row =  $(this).parent();
         var success = function () {
-            alert("Task has been run");
+            alert("Task has been run.");
         };
         console.log($(this).parent().data('id'));
         RequestsTasks.runTask($(this).parent().data('id'), success)
@@ -121,6 +128,7 @@ $(function() { // getting data for the table
     $('#resultsTable').delegate('.delete-result-btn', 'click', function () {
         var row =  $(this).parent();
         var success = function () {
+            alert("Result was removed.");
             row.remove();
         };
         console.log($(this).parent().data('id'));
@@ -132,7 +140,7 @@ $(function() { // getting data for the table
 // Results
 ResultsUrl = {
     Results: function(id){
-        var url = 'http://127.0.0.1:5000/api/results';
+        var url = '/api/results';
         if (id){
             url += '/' + id;
         }
