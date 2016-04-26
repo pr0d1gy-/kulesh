@@ -1,7 +1,8 @@
 from wtforms import Form, StringField
 from wtforms.validators import Length, DataRequired
 
-from utils.validators import UniqueValidator, JsonValidator
+from utils.validators.json import JsonValidator
+from utils.validators.unique import UniqueValidator
 
 from models.function import Function
 

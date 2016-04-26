@@ -14,7 +14,7 @@ PWD=$(pwd)/scripts
 
 
 DOWNLOAD_IMAGES=('redis' 'postgres')
-BUILD_IMAGES=('celery-worker' 'server')
+BUILD_IMAGES=('celery-worker' 'server' 'client')
 
 
 # ----------------------------------------------------------------------------

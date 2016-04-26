@@ -15,8 +15,11 @@ from models import db
 from flask import current_app
 
 
-user = User()
-user_group = UserGroup()
+try:
+    user = User()
+    user_group = UserGroup()
+except TypeError:
+    pass
 
 
 class CodeRunnerOAuth2Provider(OAuth2Provider):
