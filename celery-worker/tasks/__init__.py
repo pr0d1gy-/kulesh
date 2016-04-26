@@ -12,7 +12,7 @@ from celery import Celery
 DB_NAME = os.environ.get('DB_NAME', 'cr')
 DB_USER = os.environ.get('DB_USER', 'cr_user')
 DB_PASSWD = os.environ.get('DB_PASSWD', 'crpswrd')
-DB_HOST = os.environ.get('DB_HOST', 'postgres')
+DB_HOST = os.environ.get('DB_HOST', 'localhost')
 
 
 app = Celery('tasks')

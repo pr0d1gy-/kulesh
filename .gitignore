@@ -7,6 +7,9 @@ mike.txt
 
 */.hg
 */.env
+.env_celery
+.env_client
+.env_server
 
 # C extensions
 *.so

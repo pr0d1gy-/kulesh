@@ -141,7 +141,7 @@ ResultsUrl = {
     Results: function(id){
         var url = '/api/results';
         if (id){
-            url += '/' + id;
+            url += '/' + id + '/';
         }
         return url;
     }
