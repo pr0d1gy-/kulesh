@@ -6,11 +6,11 @@
 SUDO=sudo
 sudo true
 
-PWD=$(pwd)
+PWD=$(pwd)/scripts
 
 # ----------------------------------------------------------------------------
 
-source $PWD/scripts/variables.sh
+source $PWD/variables.sh
 
 # ----------------------------------------------------------------------------
 
