@@ -13,14 +13,14 @@ $(function () {
         row.append('<td class="delete-task-btn"><span class="btn btn-danger glyphicon glyphicon-trash"></span></td>');
         $('#allTasksTable').append(row);
     };
-    var renderTable = function (tlist) {
-        tlist.forEach(function (task) {
+    var renderTable = function (task_list) {
+        task_list.forEach(function (task) {
             renderRow(task)
         })
     };
 
     var initTasksList = function(data){
-        renderTable(data.tlist);
+        renderTable(data.task_list);
         console.log('data ', data)
     };
 

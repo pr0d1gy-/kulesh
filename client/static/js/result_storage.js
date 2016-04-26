@@ -10,15 +10,15 @@ $(function () {
         row.append('<td class="delete-result-btn"><span class="btn btn-danger glyphicon glyphicon-trash"></span></td>');
         $('#resultsTable').append(row);
     };
-    var renderTable = function (rlist) {
-        rlist.forEach(function (result) {
+    var renderTable = function (result_list) {
+        result_list.forEach(function (result) {
             renderRow(result);
         })
     };
 
     var initResultList = function(data){
         console.log('data');
-        renderTable(data.rlist);
+        renderTable(data.result_list);
     };
 
     RequestsResults.getResults(initResultList);

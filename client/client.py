@@ -139,3 +139,7 @@ def quit():
     return remote.authorize(
         callback=url_for('authorized', next=next_url, _external=True)
     )
+
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8000)

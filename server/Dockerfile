@@ -1,4 +1,4 @@
-FROM python:2.7-slim
+FROM python:3.4-slim
 
 RUN apt-get update
 RUN apt-get install build-essential libpq-dev python-dev gcc mercurial -y
@@ -10,7 +10,7 @@ RUN chown user:user /home/user -R
 
 WORKDIR /home/user/server
 
-RUN pip install -r requirements.txt
+RUN pip3 install -r requirements.txt
 RUN python -m flake8 .
 
 USER user

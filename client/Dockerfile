@@ -1,4 +1,4 @@
-FROM python:2.7-slim
+FROM python:3.4-slim
 
 RUN apt-get update
 RUN apt-get install build-essential libpq-dev python-dev gcc mercurial -y

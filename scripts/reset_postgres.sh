@@ -6,9 +6,11 @@
 SUDO=sudo
 sudo true
 
+PWD=$(pwd)
+
 # ----------------------------------------------------------------------------
 
-source variables.sh
+source $PWD/scripts/variables.sh
 
 # ----------------------------------------------------------------------------
 
@@ -29,6 +31,9 @@ then
 	echo "Postgre was not found."
 	exit
 fi
+
+POSTGRE_CONTAINER_ID="postgresql"
+echo $POSTGRE_CONTAINER_ID
 
 
 echo "Postgres container id: $POSTGRE_CONTAINER_ID"

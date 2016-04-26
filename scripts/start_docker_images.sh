@@ -10,8 +10,8 @@ sudo true
 # ----------------------------------------------------------------------------
 
 
-PWD=$(pwd)
-source variables.sh
+PWD=$(pwd)/scripts
+source $PWD/variables.sh
 
 
 # ----------------------------------------------------------------------------
@@ -137,7 +137,7 @@ then
         if [[ $IS_INSERT_FIXTURES == "y" || $IS_INSERT_FIXTURES == "Y" ]];
         then
             echo "Inserting test user..."
-            $SUDO docker exec -it $POSTGRES_CONTAINER_NAME psql -U postgres -c "insert into public.user(name, email, pwdhash) values ('test_user', 'test@mail.ru', 'pbkdf2:sha1:1000$3NOVQPrz$0c1b3a5d6c4a53078d2248ea5c4e19d40953d09f');"
+            $SUDO docker exec -it $POSTGRES_CONTAINER_NAME psql -U postgres -c "insert into public.user(name, email, password_hash) values ('test_user', 'test@mail.ru', 'pbkdf2:sha1:1000$3NOVQPrz$0c1b3a5d6c4a53078d2248ea5c4e19d40953d09f');"
             $SUDO docker exec -it $POSTGRES_CONTAINER_NAME psql -U postgres -c "insert into status (id, title) VALUES (1, 'success');"
             $SUDO docker exec -it $POSTGRES_CONTAINER_NAME psql -U postgres -c "insert into status (id, title) VALUES (2, 'error');"
             echo "Insered test user."
@@ -156,6 +156,7 @@ then
       -p 8000:8000 \
       --link $SERVER_CONTAINER_NAME:server \
       -e BASE_URL=$BASE_URL \
+      -e BASE_SERVER_URL="http://server:5000" \
       --name $CLIENT_CONTAINER_NAME client
     echo 'Client started.'
 else

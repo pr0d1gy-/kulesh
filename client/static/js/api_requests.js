@@ -1,20 +1,19 @@
 // Tasks
 TasksUrl = {
     Tasks: function(id){
-        var url = '/api/tasks';
+        var url = '/api/tasks/';
         if (id){
-            url += '/' + id;
+            url += id + '/';
         }
+
         return url;
     },
     RunTasks: function(id){
-        var url = '/api/task/run';
-        if (id){
-            url += '/' + id;
-        }
-        return url;
-    }
+        url = TasksUrl.Tasks(id);
+        url += 'run/';
 
+        return url;
+    },
 };
 
 RequestsTasks = {
