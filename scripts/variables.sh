@@ -11,3 +11,5 @@ SERVER_DB_USER="cr_user"
 SERVER_DB_PASSWD="crpswrd"
 
 BASE_URL="/"
+
+CLIENT_REDIRECT_URI="http://127.0.0.1/authorized"
