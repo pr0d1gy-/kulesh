@@ -36,6 +36,7 @@ if [[ ! -f _saved_password ]];
 then
     echo -n "Password: "
     read -s PASSWORD
+    echo ""
 
     echo -n "Save password N/y? "
     read IS_PASSWORD_SAVE
