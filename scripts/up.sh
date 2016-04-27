@@ -20,7 +20,7 @@ BUILD_IMAGES=('celery-worker' 'server' 'client')
 # ----------------------------------------------------------------------------
 
 # Download docker images?
-echo -n "Download docker images N/y: "
+echo -n "Download docker images [N/y]: "
 read IS_DOWNLOAD_IMAGES
 if [[ $IS_DOWNLOAD_IMAGES == "y" || $IS_DOWNLOAD_IMAGES == "Y" ]];
 then
@@ -31,7 +31,7 @@ fi
 
 
 # Build docker local images?
-echo -n "Build docker local images N/y: "
+echo -n "Build docker local images [N/y]: "
 read IS_BUILD_LOCAL_IMAGES
 if [[ $IS_BUILD_LOCAL_IMAGES == "y" || $IS_BUILD_LOCAL_IMAGES == "Y" ]];
 then
@@ -42,7 +42,7 @@ fi
 
 
 # Start docker images?
-echo -n "Start dockers images n/Y: "
+echo -n "Start dockers images [n/Y]: "
 read IS_START_IMAGES
 if [[ $IS_START_IMAGES == "n" || $IS_START_IMAGES == "N" ]];
 then
@@ -50,6 +50,18 @@ then
 else
     IS_START_IMAGES=true
     $SUDO chmod "+x" "$PWD/start_docker_images.sh"
+fi
+
+
+# Cofigure nginx?
+echo -n "Configure nginx [N/y]: "
+read IS_CONFIGURE_NGINX
+if [[ $IS_CONFIGURE_NGINX == "n" || $IS_CONFIGURE_NGINX == "N" ]];
+then
+    IS_CONFIGURE_NGINX=true
+else
+    IS_CONFIGURE_NGINX=false
+    $SUDO chmod "+x" "$PWD/nginx_configure.sh"
 fi
 
 # ----------------------------------------------------------------------------
@@ -66,7 +78,7 @@ then
       echo "Compleate download $DOWNLOAD_IMAGE"
     done;
 
-    echo "Downloading complete."
+    echo "Downloading was complete."
 fi
 
 
@@ -82,7 +94,16 @@ then
       echo "Builded $BUILD_IMAGE"
     done;
 
-    echo "Building complete."
+    echo "Building was complete."
+fi
+
+
+# Nginx config
+if [[ $IS_CONFIGURE_NGINX == true ]];
+then
+    echo "Configure nginx..."
+    $SUDO "$PWD/nginx_configure.sh"
+    echo "Nginx was configured."
 fi
 
 
@@ -91,7 +112,7 @@ if [[ $IS_START_IMAGES == true ]];
 then
     echo "Starting..."
     $SUDO "$PWD/start_docker_images.sh"
-    echo "Starting complete."
+    echo "Starting was complete."
 fi
 
 # ----------------------------------------------------------------------------

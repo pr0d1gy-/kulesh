@@ -38,7 +38,7 @@ then
     read -s PASSWORD
     echo ""
 
-    echo -n "Save password N/y? "
+    echo -n "Save password? [N/y] "
     read IS_PASSWORD_SAVE
     if [[ $IS_PASSWORD_SAVE == "Y" || $IS_PASSWORD_SAVE == "y" ]];
     then

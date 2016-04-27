@@ -18,7 +18,7 @@ source $PWD/variables.sh
 
 
 # How many workers to start for cellery?
-echo -n "How many workers to start for celery (1 .. 10)?: "
+echo -n "How many workers to start for celery? [1 .. 10]: "
 read WORKER_COUNT
 IS_VALID_WORKER_COUNT=$(test -z $(echo $WORKER_COUNT | sed s/[0-9]//g) && echo "1" || echo "0")
 
@@ -37,15 +37,15 @@ fi
 
 
 # Reset postgres?
-echo -n "Reset postgre N/y? "
+echo -n "Reset postgre? [N/y] "
 read IS_RESET_POSTGRES
 
 # Apply migrations?
-echo -n "Apply server migrations N/y? "
+echo -n "Apply server migrations? [N/y] "
 read IS_APPLY_MIGRATIONS
 
 # Is insert test user?
-echo -n "Is insert test user N/y? "
+echo -n "Is insert test user? [N/y] "
 read IS_INSERT_FIXTURES
 
 # ----------------------------------------------------------------------------
