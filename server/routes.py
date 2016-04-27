@@ -5,6 +5,7 @@ from views.user import UserItemMethodView, me
 
 from views.auth.client import client
 from views.auth.login import LoginMethodView
+from views.auth.logout import logout
 from views.auth.register import RegisterMethodView
 from views.auth.oauth import access_token, authorize
 
@@ -25,10 +26,13 @@ routes = {
     '/api/data/': DataListMethodView.as_view('datas'),
     '/api/data/<int:data_id>/': DataItemMethodView.as_view('data'),
 
-    # Oauth
-    '/client': ['client', client],
+    # Auth
     '/login': LoginMethodView.as_view('login'),
     '/register': RegisterMethodView.as_view('register'),
+    '/logout': ['logout', logout],
+
+    # Oauth
+    '/client': ['client', client],
     '/oauth/authorize': ['authorize', authorize, {
         'methods': ['GET', 'POST']
     }],

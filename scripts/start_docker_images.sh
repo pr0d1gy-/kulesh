@@ -44,8 +44,8 @@ read IS_RESET_POSTGRES
 echo -n "Apply server migrations? [N/y] "
 read IS_APPLY_MIGRATIONS
 
-# Is insert test user?
-echo -n "Is insert test user? [N/y] "
+# Is insert test fixtures?
+echo -n "Is insert test fixtures? [N/y] "
 read IS_INSERT_FIXTURES
 
 # ----------------------------------------------------------------------------
@@ -133,16 +133,16 @@ then
         $SUDO docker exec -it $SERVER_CONTAINER_NAME python /home/user/server/server.py db migrate
         $SUDO docker exec -it $SERVER_CONTAINER_NAME python /home/user/server/server.py db upgrade
         echo "Aplied migrations."
+    fi
 
-        if [[ $IS_INSERT_FIXTURES == "y" || $IS_INSERT_FIXTURES == "Y" ]];
-        then
-            echo "Inserting test user..."
-            $SUDO docker exec -it $POSTGRES_CONTAINER_NAME psql -U postgres -c "insert into public.user(name, email, password_hash) values ('test_user', 'test@mail.ru', 'pbkdf2:sha1:1000$3NOVQPrz$0c1b3a5d6c4a53078d2248ea5c4e19d40953d09f');"
-            $SUDO docker exec -it $POSTGRES_CONTAINER_NAME psql -U postgres -c "insert into status (id, title) VALUES (1, 'success');"
-            $SUDO docker exec -it $POSTGRES_CONTAINER_NAME psql -U postgres -c "insert into status (id, title) VALUES (2, 'error');"
-            $SUDO docker exec -it $POSTGRES_CONTAINER_NAME psql -U postgres -c "insert into client (client_id, client_secret, user_id, _redirect_uris, _default_scopes) VALUES ('9MmWLbkXfaWUYXCibA1393Ov46JKGJDKU4J7vVro', 'rGJ6GzmXRX7NglMkaVSbrowiwX9ZpDHhz9eSuFRHXkyHDgBRPs', 1, '$CLIENT_REDIRECT_URI http://127.0.0.1/authorized http://127.0.0.1:3333/authorized http://localhost:8000/authorized http://127.0.0.1:8000/authorized http://127.0.1:8000/authorized http://127.1:8000/authorized', 'email');"
-            echo "Insered test user."
-        fi
+    if [[ $IS_INSERT_FIXTURES == "y" || $IS_INSERT_FIXTURES == "Y" ]];
+    then
+        echo "Inserting test user..."
+        $SUDO docker exec -it $POSTGRES_CONTAINER_NAME psql -U postgres -c "insert into public.user(name, email, password_hash) values ('test_user', 'test@mail.ru', 'pbkdf2:sha1:1000$3NOVQPrz$0c1b3a5d6c4a53078d2248ea5c4e19d40953d09f');"
+        $SUDO docker exec -it $POSTGRES_CONTAINER_NAME psql -U postgres -c "insert into status (id, title) VALUES (1, 'success');"
+        $SUDO docker exec -it $POSTGRES_CONTAINER_NAME psql -U postgres -c "insert into status (id, title) VALUES (2, 'error');"
+        $SUDO docker exec -it $POSTGRES_CONTAINER_NAME psql -U postgres -c "insert into client (client_id, client_secret, user_id, _redirect_uris, _default_scopes) VALUES ('9MmWLbkXfaWUYXCibA1393Ov46JKGJDKU4J7vVro', 'rGJ6GzmXRX7NglMkaVSbrowiwX9ZpDHhz9eSuFRHXkyHDgBRPs', 1, '$CLIENT_REDIRECT_URI http://127.0.0.1/authorized http://127.0.0.1:3333/authorized http://localhost:8000/authorized http://127.0.0.1:8000/authorized http://127.0.1:8000/authorized http://127.1:8000/authorized', 'email');"
+        echo "Insered test user."
     fi
 else
     echo 'Server is already started.'

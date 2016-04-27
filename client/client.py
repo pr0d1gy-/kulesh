@@ -133,12 +133,22 @@ def get_profile_settings():
     )
 
 
-@app.route('/quit')
-def quit():
+@app.route('/refresh_token')
+def refresh_token():
     next_url = None
     return remote.authorize(
         callback=url_for('authorized', next=next_url, _external=True)
     )
+
+
+@app.route('/logout')
+def logout():
+    next_url = None
+
+    return remote.authorize(
+        callback=url_for('logout', next=next_url, _external=True)
+    )
+
 
 
 if __name__ == '__main__':

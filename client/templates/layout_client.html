@@ -6,6 +6,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
     <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-2.1.4.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.cookie.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/default.js') }}"></script>
       <script type="text/javascript" src="{{ url_for('static', filename='js/api_requests.js') }}"></script>
     <title>{% block title %}{% endblock %} - CodeRunner</title>
   {% endblock %}
@@ -42,7 +44,10 @@
 {#                  <a href={{ url_for('get_profile_settings') }}>Profile settings</a>#}
 {#              </li>#}
               <li id="quit" role="presentation">
-                  <a href={{ url_for('quit') }}>Refresh token</a>
+                  <a href={{ url_for('refresh_token') }}>Refresh token</a>
+              </li>
+              <li id="quit" role="presentation">
+                  <a href={{ url_for('logout') }}>Logout</a>
               </li>
           </ul>
       </div>
