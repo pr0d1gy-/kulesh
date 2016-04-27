@@ -28,6 +28,7 @@
                                             </span> 
                                             <input class="form-control" placeholder="Email" name="email" type="text" autofocus>
                                         </div>
+                                        <ul class="ul-error">{% for error in form.email.errors %}<li class="text-danger">{{ error }}</li>{% endfor %}</ul>
                                     </div>
                                     <div class="form-group">
                                         <div class="input-group">
@@ -36,6 +37,7 @@
                                             </span>
                                             <input class="form-control" placeholder="Password" name="password" type="password" value="">
                                         </div>
+                                        <ul class="ul-error">{% for error in form.password.errors %}<li class="text-danger">{{ error }}</li>{% endfor %}</ul>
                                     </div>
                                     <div class="form-group">
                                         <input type="submit" class="btn btn-lg btn-primary btn-block" value="Sign in">

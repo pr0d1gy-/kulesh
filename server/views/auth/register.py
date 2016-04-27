@@ -1,6 +1,6 @@
 from views.base_view import BaseMethodView
 
-from flask import render_template, redirect, url_for, flash, request
+from flask import render_template, redirect, url_for, flash
 
 from forms.auth.register import RegisterForm
 
@@ -9,6 +9,8 @@ from models.user import User
 
 from sqlalchemy.exc import IntegrityError
 
+from utils.forms import request_fields_to_kwargs
+
 
 class RegisterMethodView(BaseMethodView):
 
@@ -16,22 +18,10 @@ class RegisterMethodView(BaseMethodView):
         return render_template('register.html', form=RegisterForm)
 
     def post(self):
-        fields = ['username', 'email', 'password', 'password_confirm']
-
-        form = RegisterForm(**{field: request.form.get(field, '').strip()
-                               for field in fields})
+        form = RegisterForm(**request_fields_to_kwargs(fields=[
+            'username', 'email', 'password', 'password_confirm']))
 
         if not form.validate():
-            for field in fields:
-                field_errors = getattr(form, field).errors
-                if field_errors:
-                    field_name = field.split('_')
-                    for i, name in enumerate(field_name):
-                        field_name[i] = name[0].upper() + name[1:].lower()
-                    field = ' '.join(field_name)
-
-                    flash('%s: %s' % (field, '\n'.join(field_errors)), 'error')
-
             return render_template('register.html', form=form)
 
         user = User(
