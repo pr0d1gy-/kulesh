@@ -1,6 +1,6 @@
 import settings
 
-from flask import session, redirect, jsonify
+from flask import session, redirect, jsonify, url_for
 
 from werkzeug.security import gen_salt
 
@@ -15,7 +15,7 @@ def client():
     user = current_user()
     if not user:
         # session['id'] = 1  # temporary decision
-        return redirect('/register')
+        return redirect(url_for('register'))
 
     item = Client(
         client_id=gen_salt(40),

@@ -19,4 +19,5 @@ class UniqueValidator(object):
                                      '`%s` must be unique.',
                                      self.field)
 
-            raise StopValidation(message)
+            raise StopValidation((message % self.field)
+                                 if not self.message else self.message)

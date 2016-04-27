@@ -26,16 +26,18 @@
                                             <span class="input-group-addon">
                                                 <i class="glyphicon glyphicon-user"></i>
                                             </span> 
-                                            <input class="form-control" placeholder="Username" name="loginname" type="text" autofocus>
+                                            <input class="form-control" autocomplete="off" placeholder="Username" name="username" type="text" autofocus value="{% if form %}{{ form.username.data }}{% endif %}">
                                         </div>
+                                        <ul class="ul-error">{% for error in form.username.errors %}<li class="text-danger">{{ error }}</li>{% endfor %}</ul>
                                     </div>
                                     <div class="form-group">
                                         <div class="input-group">
                                             <span class="input-group-addon">
                                                 <i class="glyphicon glyphicon-envelope"></i>
                                             </span> 
-                                            <input class="form-control" placeholder="Email" name="email" type="text" autofocus>
+                                            <input class="form-control" autocomplete="off" placeholder="Email" name="email" type="text" autofocus value="{% if form %}{{ form.email.data }}{% endif %}">
                                         </div>
+                                        <ul class="ul-error">{% for error in form.email.errors %}<li class="text-danger">{{ error }}</li>{% endfor %}</ul>
                                     </div>
                                     <div class="form-group">
                                         <div class="input-group">
@@ -44,13 +46,14 @@
                                             </span>
                                             <input class="form-control" placeholder="Password" name="password" type="password" value="">
                                         </div>
+                                        <ul class="ul-error">{% for error in form.password.errors %}<li class="text-danger">{{ error }}</li>{% endfor %}</ul>
                                     </div>
                                     <div class="form-group">
                                         <div class="input-group">
                                             <span class="input-group-addon">
                                                 <i class="glyphicon glyphicon-lock"></i>
                                             </span>
-                                            <input class="form-control" placeholder="Confirm password" name="confirm_pass" type="password" value="">
+                                            <input class="form-control" placeholder="Confirm password" name="password_confirm" type="password" value="">
                                         </div>
                                     </div>
                                     <div class="form-group">

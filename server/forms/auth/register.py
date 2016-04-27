@@ -1,12 +1,26 @@
 from wtforms import Form, PasswordField, StringField
 from wtforms.validators import Email, Length, DataRequired, EqualTo
 
+from utils.validators.unique import UniqueValidator
 
-class LoginForm(Form):
+from models.user import User
+
+
+class RegisterForm(Form):
+
+    username = StringField('username', [
+        DataRequired(),
+        Length(min=2, max=50)
+    ])
 
     email = StringField('email', [
         DataRequired(),
-        Email()
+        Email(),
+        UniqueValidator(
+            model=User,
+            field='email',
+            message='Email must be unique.'
+        )
     ])
 
     password = PasswordField('password', [
@@ -15,7 +29,4 @@ class LoginForm(Form):
         EqualTo('password_confirm', message='Password do not match.')
     ])
 
-    password_confirm = PasswordField('password', [
-        DataRequired(),
-        Length(min=6, max=12)
-    ])
+    password_confirm = PasswordField('password_confirm')
