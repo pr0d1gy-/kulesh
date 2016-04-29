@@ -3,8 +3,49 @@
 {% block head %}
     {{ super() }}
 {% endblock %}
+{% block ext_js %}
+    <script type="text/javascript" src="{{ url_for('static', filename='js/profile_settings.js') }}"></script>
+{% endblock ext_js %}
 {% block content %}
     <div class="container-fluid">
         <h3 class="title">Profile settings</h3>
+        <form class="form-horizontal" id="frm_profile_edit" method="POST">
+            <div class="form-group">
+                <label type="text" class="col-xs-3 col-sm-3 col-md-3 control-label">ID</label>
+                <div class="col-xs-8 col-sm-6 col-md-6">
+                    <input type="text" class="form-control" placeholder="ID" name="id" readonly>
+                </div>
+            </div>
+            <div class="form-group">
+                <label type="text" class="col-xs-3 col-sm-3 col-md-3 control-label">Username</label>
+                <div class="col-xs-8 col-sm-6 col-md-6">
+                    <input type="text" class="form-control" placeholder="Username" name="username">
+                </div>
+            </div>
+            <div class="form-group">
+                <label type="text" class="col-xs-3 col-sm-3 col-md-3 control-label">E-mail</label>
+                <div class="col-xs-8 col-sm-6 col-md-6">
+                    <input type="text" class="form-control" placeholder="E-mail" name="email">
+                </div>
+            </div>
+            <div class="form-group">
+                <label type="text" class="col-xs-3 col-sm-3 col-md-3 control-label">Password</label>
+                <div class="col-xs-8 col-sm-6 col-md-6">
+                    <input type="text" class="form-control" placeholder="Password" name="password">
+                </div>
+            </div>
+            <div class="form-group">
+                <label type="text" class="col-xs-3 col-sm-3 col-md-3 control-label">Password Confirm</label>
+                <div class="col-xs-8 col-sm-6 col-md-6">
+                    <input type="text" class="form-control" placeholder="Password Confirm" name="password_confirm">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-xs-offset-3 col-sm-offset-3 col-md-offset-3 col-xs-6 col-sm-4 col-md-4">
+                    <input type="submit" class="btn btn-md btn-primary btn-block" value="Update">
+                </div>
+            </div>
+        </form>
+
     </div>
 {% endblock %}

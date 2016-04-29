@@ -7,6 +7,7 @@
 PWD=$(pwd)
 TEAM_NAME='lightitcr'
 MERCURIAL_REPOS=('celery-worker' 'client' 'server' 'scripts')
+GIT_REPOS=('plugins' 'dicompylerio-server')
 
 # ----------------------------------------------------------------------------
 
@@ -21,6 +22,17 @@ else
 fi
 
 
+if [[ -f _saved_email ]];
+then
+    EMAIL=$(cat _saved_email)
+    echo "Using saved email: $EMAIL"
+else
+    echo -n "Email: "
+    read EMAIL
+    echo $EMAIL > _saved_email
+fi
+
+
 if [[ -f _saved_fullname ]];
 then
     FULLNAME=$(cat _saved_fullname)
@@ -28,6 +40,12 @@ then
 else
     echo -n "Full name and email to display, e.g. John Doe <john@mail.com>: "
     read FULLNAME
+
+    if [[ $FULLNAME == "" ]];
+    then
+        FULLNAME="$USERNAME <$EMAIL>"
+    fi
+
     echo $FULLNAME > _saved_fullname
 fi
 
@@ -55,7 +73,8 @@ fi
 # ----------------------------------------------------------------------------
 
 
-
+if [[ 1 != 1 ]];
+then
 for REPOSITORY in ${MERCURIAL_REPOS[@]};
 do
 
@@ -84,6 +103,41 @@ do
         hg clone https://$USERNAME:$PASSWORD@bitbucket.org/$TEAM_NAME/$REPOSITORY -R $PWD/$REPOSITORY
         echo "$REPOSITORY cloned."
         echo -e "$HGRC" > "$PWD/$REPOSITORY/.hg/hgrc"
+    fi
+
+done;
+fi
+
+for REPOSITORY in ${GIT_REPOS[@]};
+do
+
+    CONFIG="[core]\nrepositoryformatversion = 0\nfilemode = true\nbare = false\nlogallrefupdates = true\n"
+    CONFIG+="[remote \"origin\"]\nurl = https://$USERNAME$SAVED_PASSWORD@bitbucket.org/lightitcr/$REPOSITORY.git\n"
+    CONFIG+="fetch = +refs/heads/*:refs/remotes/origin/*\n[branch \"master\"]\nremote = origin\nmerge = refs/heads/master\n"
+    CONFIG+="[user]\nemail = $EMAIL\nname = $USERNAME\n"
+
+    if [[ -d $PWD/$REPOSITORY ]];
+    then
+        echo "$REPOSITORY folder was found."
+        if [[ -d $PWD/$REPOSITORY/.git ]];
+        then
+            echo "$REPOSITORY git was found."
+        else
+            echo "$REPOSITORY git was not found."
+            echo "$REPOSITORY init git..."
+            git init $PWD/$REPOSITORY
+            echo -e "$CONFIG" > "$PWD/$REPOSITORY/.git/config"
+            echo "$REPOSITORY git initiated."
+        fi
+        echo "$REPOSITORY pulling..."
+        git pull origin master
+        echo "$REPOSITORY pulled."
+    else
+        echo "$REPOSITORY folder was not found."
+        echo "$REPOSITORY cloning..."
+        git clone https://$USERNAME:$PASSWORD@bitbucket.org/$TEAM_NAME/$REPOSITORY.git $PWD/$REPOSITORY
+        echo "$REPOSITORY cloned."
+        echo -e "$CONFIG" > "$PWD/$REPOSITORY/.git/config"
     fi
 
 done;

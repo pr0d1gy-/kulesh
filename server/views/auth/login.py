@@ -22,7 +22,7 @@ class LoginMethodView(BaseMethodView):
         if not form.validate():
             return render_template('login.html', form=form)
 
-        user = User.query.filter_by(email=form.email.data).first()
+        user = User.query.filter_by(email=form.email.data).limit(1).first()
         if user and user.check_password(form.password.data):
             session['id'] = user.id
             flash('Login successful.', 'success')

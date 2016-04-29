@@ -41,6 +41,6 @@ routes = {
     }],
 
     # Users
-    '/api/me': ['me', me],
-    '/api/users/<int:user_id>': UserItemMethodView.as_view('user'),
+    '/api/me/': ['me', me],
+    '/api/users/<int:user_id>/': UserItemMethodView.as_view('user'),
 }

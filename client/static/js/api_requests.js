@@ -185,3 +185,49 @@ RequestsResults = {
     }
 };
 
+
+var get_form_data = function(form){
+    var data = {}
+    form.find('input', 'textarea').each(function(i, el){
+        var name = $(el).attr('name');
+        if (name) {
+            data[name] = $(el).val();
+        }
+    });
+
+    return data;
+};
+
+
+ProfileUrl = {
+    me: function(){
+        return '/api/me/'
+    },
+    user: function(id){
+        return '/api/users/' + id + '/';
+    }
+};
+
+ProfileRequests = {
+    get: function (success) {
+        $.ajax({
+            url: ProfileUrl.me(),
+            method: 'GET',
+            dataType: 'JSON',
+            data: {
+                'access_token': RequestsTasks.getToken()
+            },
+            success: success
+        })
+    },
+    update: function(id, data, success) {
+        data['access_token'] = RequestsTasks.getToken();
+        $.ajax({
+            url: ProfileUrl.user(id),
+            method: 'PUT',
+            dataType: 'JSON',
+            data: data,
+            success: success
+        })
+    }
+};

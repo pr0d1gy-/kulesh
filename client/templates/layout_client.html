@@ -6,9 +6,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
     <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-2.1.4.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.cookie.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/default.js') }}"></script>
-      <script type="text/javascript" src="{{ url_for('static', filename='js/api_requests.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/api_requests.js') }}"></script>
     <title>{% block title %}{% endblock %} - CodeRunner</title>
   {% endblock %}
   {% block ext_js %}{% endblock ext_js %}
@@ -40,9 +39,9 @@
               <li id="results_storage" role="presentation">
                   <a href={{ url_for('get_results_storage') }}>Results storage</a>
               </li>
-{#              <li id="profile_settings" role="presentation">#}
-{#                  <a href={{ url_for('get_profile_settings') }}>Profile settings</a>#}
-{#              </li>#}
+              <li id="profile_settings" role="presentation">
+                  <a href={{ url_for('get_profile_settings') }}>Profile settings</a>
+              </li>
               <li id="quit" role="presentation">
                   <a href={{ url_for('refresh_token') }}>Refresh token</a>
               </li>

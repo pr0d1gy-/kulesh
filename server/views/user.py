@@ -8,6 +8,9 @@ from models.user import User
 from oauth_provider import CodeRunnerOAuth2Provider
 
 from utils import current_user
+from utils.forms import request_fields_to_kwargs
+
+from forms.auth.register import RegisterForm
 
 
 oauth = CodeRunnerOAuth2Provider()
@@ -18,8 +21,9 @@ def me():
     user = request.oauth.user
 
     return jsonify(
+        id=user.id,
         username=user.name,
-        email=user.email
+        email=user.email,
     )
 
 
@@ -42,16 +46,30 @@ class UserItemMethodView(BaseMethodView):
                 msg='Not permission'
             ), 403
 
-        name = request.values.get('name', None)
-        email = request.values.get('email', None)
-        password = request.values.get('password', None)
+        form_data = request_fields_to_kwargs([
+            'username', 'email', 'password', 'password_confirm'
+        ])
 
-        if name:
-            user.name = name
-        if email:
-            user.email = email
-        if password:
-            user.password_hash = password
+        is_change_password = True
+        if not form_data['password']:
+            form_data['password'] = 'test_password'
+            form_data['password_confirm'] = 'test_password'
+
+            is_change_password = False
+
+        form = RegisterForm(**form_data)
+        if not form.validate():
+            return jsonify(
+                status='Error',
+                type='validation',
+                **form.errors
+            ), 400
+
+        user.name = form.username
+        user.email = form.email
+
+        if is_change_password:
+            user.password_hash = form.password
 
         try:
             db.session.commit()
@@ -64,7 +82,8 @@ class UserItemMethodView(BaseMethodView):
         except Exception:
             return jsonify(
                 status='Error',
-                msg='Can not update user'
+                type='',
+                msg='Can not update user.'
             ), 500
 
     @oauth.require_oauth()
