@@ -20,5 +20,7 @@ _saved_fullname
 _saved_username
 _saved_password
 
+dico
+
 # Django stuff:
 *.log
